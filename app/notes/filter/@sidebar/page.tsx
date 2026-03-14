@@ -3,12 +3,12 @@ import { fetchNotes } from '@/lib/api/notes';
 import NoteList from '@/components/NoteList/NoteList';
 
 type Props = {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug?: string[] }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const tag = slug[0];
+  const { slug = [] } = await params;
+  const tag = slug[0] || 'all';
   const title = tag === 'all' ? 'All Notes' : `${tag} Notes`;
 
   return {
@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function FilterPage({ params }: Props) {
-  const { slug } = await params;
-  const tag = slug[0];
+  const { slug = [] } = await params;
+  const tag = slug[0] || 'all';
   const notesResponse = await fetchNotes({ tag: tag === 'all' ? undefined : tag });
   const notes = Array.isArray(notesResponse) ? notesResponse : notesResponse.notes;
 
