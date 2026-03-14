@@ -4,18 +4,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { createNote } from '@/lib/api/notes';
 import { useNoteStore } from '@/lib/store/noteStore';
-import { useEffect, useState } from 'react';
 import css from './NoteForm.module.css';
 
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { draft, setDraft, clearDraft } = useNoteStore();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const mutation = useMutation({
     mutationFn: createNote,
@@ -26,7 +20,8 @@ export default function NoteForm() {
     },
   });
 
-  const handleAction = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     mutation.mutate(draft);
   };
 
@@ -41,10 +36,8 @@ export default function NoteForm() {
     router.back();
   };
 
-  if (!isMounted) return null;
-
   return (
-    <form className={css.form} action={handleAction}>
+    <form className={css.form} onSubmit={handleSubmit}>
       <div className={css.formGroup}>
         <label htmlFor="title">Title</label>
         <input
@@ -95,11 +88,10 @@ export default function NoteForm() {
         <button type="button" className={css.cancelButton} onClick={handleCancel}>
           Cancel
         </button>
-        <button 
-          type="submit" 
-          className={css.submitButton} 
+        <button
+          type="submit"
+          className={css.submitButton}
           disabled={mutation.isPending}
-          formAction={handleAction}
         >
           {mutation.isPending ? 'Creating...' : 'Create note'}
         </button>

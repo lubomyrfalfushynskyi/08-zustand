@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchNotes } from '@/lib/api/notes';
@@ -16,11 +16,6 @@ interface FilterNotesClientProps {
 export default function FilterNotesClient({ tag }: FilterNotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
 
   const handleSearch = useDebouncedCallback((value: string) => {
     setSearch(value);
@@ -32,10 +27,7 @@ export default function FilterNotesClient({ tag }: FilterNotesClientProps) {
     queryFn: () => fetchNotes({ page, search, tag }),
     placeholderData: keepPreviousData,
     retry: 1,
-    enabled: hasMounted,
   });
-
-  if (!hasMounted) return <div><p>Loading...</p></div>;
 
   const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 1;
