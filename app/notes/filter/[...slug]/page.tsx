@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { fetchNotes } from '@/lib/api/notes';
-import NoteList from '@/components/NoteList/NoteList';
+import FilterNotesClient from './Notes.client';
 
 type Props = {
   params: Promise<{ slug?: string[] }>;
@@ -31,13 +30,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function FilterPage({ params }: Props) {
   const { slug = [] } = await params;
   const tag = slug[0] || 'all';
-  const notesResponse = await fetchNotes({ tag: tag === 'all' ? undefined : tag });
-  const notes = Array.isArray(notesResponse) ? notesResponse : notesResponse.notes;
 
   return (
     <div>
       <h1>Notes {tag !== 'all' ? `- ${tag}` : ''}</h1>
-      <NoteList notes={notes} />
+      <FilterNotesClient tag={tag === 'all' ? undefined : tag} />
     </div>
   );
 }

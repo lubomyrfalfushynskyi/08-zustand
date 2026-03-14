@@ -9,7 +9,11 @@ import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
 import Link from 'next/link';
 
-export default function FilterNotesClient() {
+interface FilterNotesClientProps {
+  tag?: string;
+}
+
+export default function FilterNotesClient({ tag }: FilterNotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [hasMounted, setHasMounted] = useState(false);
@@ -24,8 +28,8 @@ export default function FilterNotesClient() {
   }, 300);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['notes', page, search],
-    queryFn: () => fetchNotes({ page, search }),
+    queryKey: ['notes', page, search, tag],
+    queryFn: () => fetchNotes({ page, search, tag }),
     placeholderData: keepPreviousData,
     retry: 1,
     enabled: hasMounted,
