@@ -34,7 +34,7 @@ export default function NoteForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setDraft({ [name]: value });
+    setDraft({ ...draft, [name]: value });
   };
 
   const handleCancel = () => {
